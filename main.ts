@@ -1,6 +1,16 @@
-import { serve, serveStatic } from "https://deno.land/x/sift@0.4.3/mod.ts";
+import { Application } from "https://deno.land/x/oak/mod.ts";
 
-serve({
-  // You can serve a single file.
-  "/": serveStatic("readme.txt", { baseUrl: import.meta.url }),
+const app = new Application();
+
+app.use(async (context, next) => {
+  try {
+    await context.send({
+      root: Deno.cwd(),
+      index: "readme.txt",
+    });
+  } catch {
+    next();
+  }
 });
+
+await app.listen({ port: 8000 });
