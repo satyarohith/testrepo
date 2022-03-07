@@ -1,9 +1,14 @@
-import { serve } from "https://deno.land/std@0.114.0/http/server.ts";
+import { Application } from 'https://deno.land/x/oak@v10.4.0/mod.ts'
 
-function handler(req: Request): Promise<Response> {
-  const url = new URL("./main.ts", import.meta.url);
-  return fetch(url);
-}
+const port = parseInt(Deno.env.get('PORT') || '4008', 10)
+const app = new Application()
 
-console.log("Listening on http://localhost:8000");
-await serve(handler);
+app.use(async ctx => {
+  await ctx.send({
+    root: Deno.cwd(),
+    index: 'readme.txt'
+  })
+})
+
+console.debug(`Listening on 0.0.0.0:${port}`)
+await app.listen({ port })
